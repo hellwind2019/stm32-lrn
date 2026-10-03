@@ -56,7 +56,9 @@ static void MX_USART2_UART_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-volatile int testSeconds = 0;
+
+/*Set PortA pin 5 to output (LED on the board) */
+
 /* USER CODE END 0 */
 
 /**
@@ -90,15 +92,34 @@ int main(void)
   MX_GPIO_Init();
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
+  //SET portA pin 13 as output
+  RCC->AHBENR |= RCC_AHBENR_GPIOAEN;
 
+  //Mode register - MODER
+  GPIOA -> MODER |= GPIO_MODER_MODER5_0;  //Set Bit to 1
+  GPIOA -> MODER &= ~GPIO_MODER_MODER5_1; //Set Bit to 0
+
+  //Output type register - OTYPE
+  GPIOA -> OTYPER &= ~GPIO_OTYPER_OT_5; // Set to 0: Output push-pull (reset state)
+
+  //Output Speed register - OSPEED
+  GPIOA -> OSPEEDR &= ~GPIO_OSPEEDER_OSPEEDR5_0; // Set first bit to 0  x0: Low speed
+  //Pull up Pull down reg. - PUPD
+  GPIOA -> PUPDR &= ~GPIO_PUPDR_PUPDR5_0;
+  GPIOA -> PUPDR &= ~GPIO_PUPDR_PUPDR5_1;
+
+  //Set High to Pin5
+  GPIOA -> BSRR |= GPIO_BSRR_BS_5;
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-//	  HAL_Delay(1000);
-	  testSeconds++;
+	  GPIOA -> BSRR |= GPIO_BSRR_BS_5;
+	  HAL_Delay(1000);
+	  GPIOA -> BSRR |= GPIO_BSRR_BR_5;
+	  HAL_Delay(1000);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
