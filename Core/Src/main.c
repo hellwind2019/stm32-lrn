@@ -105,21 +105,31 @@ int main(void)
   //Output Speed register - OSPEED
   GPIOA -> OSPEEDR &= ~GPIO_OSPEEDER_OSPEEDR5_0; // Set first bit to 0  x0: Low speed
   //Pull up Pull down reg. - PUPD
-  GPIOA -> PUPDR &= ~GPIO_PUPDR_PUPDR5_0;
-  GPIOA -> PUPDR &= ~GPIO_PUPDR_PUPDR5_1;
+//  GPIOA -> PUPDR &= ~GPIO_PUPDR_PUPDR5_0;
+//  GPIOA -> PUPDR &= ~GPIO_PUPDR_PUPDR5_1;
+   	GPIOA -> PUPDR &= ~GPIO_PUPDR_PUPDR5;
 
   //Set High to Pin5
   GPIOA -> BSRR |= GPIO_BSRR_BS_5;
+
+
+  //Input fort PORTC pin 13(blue button)
+  GPIOC -> MODER &= ~(GPIO_MODER_MODER13);
+  GPIOC -> PUPDR &= ~GPIO_PUPDR_PUPDR13_1;
+  GPIOC -> PUPDR |= GPIO_PUPDR_PUPDR13_0;
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	  GPIOA -> BSRR |= GPIO_BSRR_BS_5;
-	  HAL_Delay(1000);
-	  GPIOA -> BSRR |= GPIO_BSRR_BR_5;
-	  HAL_Delay(1000);
+	   if (!(GPIOC->IDR & GPIO_IDR_13)){
+		   GPIOA -> BSRR |= GPIO_BSRR_BS_5;
+	   }
+	   else {
+		   GPIOA -> BSRR |= GPIO_BSRR_BR_5;
+	   }
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
